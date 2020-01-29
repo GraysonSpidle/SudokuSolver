@@ -207,23 +207,116 @@ bool SudokuAlgorithms::hiddenSequence(Board<_Ty, _N> & board) {
 
 ALGORITHM_TEMPLATE
 bool SudokuAlgorithms::intersectionRemoval(Board<_Ty, _N> & board) {
-	/* Assumptions:
+	/* https://www.sudokuwiki.org/Intersection_Removal
+	Assumptions:
 	n = the size of the user supplied board.
 
 	Conditions to satisfy:
 	1. Looking for at least 2 empty unique cells.
 	2. These cells must all share 1 marking.
-	3. The cells must be all in the same box and must meet 1 of the following sub-conditions:
+	3. The cells must all be in the same box and must meet 1 of the following sub-conditions:
 		3a. The cells must be aligned on the same row and they must be the only cells with the shared marking in the row or box.
 		3b. The cells must be aligned on the same column and they must be the only cells with the shared marking in the column or box.
 	If all conditions are satisfied:
 	- the action varies depending on which sub-conditions are satisfied
 	*/
 
+	bool mutated = false;
+	auto markingMap = mapCellsToMarks(board); // satisfies condition 2
+	
+	for (auto it = markingMap.begin(); it != markingMap.end(); ++it) {
+		if (it->second.size() <= 0)
+			throw "Something went wrong with mapCellsToMarks()";
+		if (it->second.size() == 1) { // We found a naked/hidden single!
+			mutated |= it->second[0].setValue(it->first);
+			return true;
+		}
 
-	// TODO
+		// Now we have to filter the collection of cells to cells that are in the same box, but we need to do this for each box
+		for (_Ty bx = 0; bx < _N; ++bx) {
+			// Getting cells that are all in the same box
+			auto cellsInBox = std::vector<Cell<_Ty, _N>>();
+			std::for_each(it->second.begin(), it->second.end(), [&bx, &cellsInBox](Cell<_Ty, _N> & cell) {
+				if (cell.getBoxIndex() == bx)
+					cellsInBox.push_back(cell);
+			});
 
-	return false;
+			if (cellsInBox.size() > ROOT_N) { // This means they cannot all be aligned on a row or column inside the box (but some may be the only ones in the row)
+				// Alright, this one is going to get kinda crazy.
+				// We need to iterate thru each possible row and column the box encompasses and check if the only cells containing the marking are inside our box
+				
+				auto pred = [&it, &bx](Cell<_Ty, _N> & cell) {
+					return cell.isEmpty() && cell.getBoxIndex() != bx && cell.containsMark(it->first);
+				};
+				auto pred2 = [&it, &bx](Cell<_Ty, _N> & cell) {
+					return cell.isEmpty() && cell.getBoxIndex() == bx && cell.containsMark(it->first);
+				};
+				auto func = [&cellsInBox, &mutated](Cell<_Ty, _N> & cell) {
+					if (!cell.isEmpty() || std::find(cellsInBox.begin(), cellsInBox.end(), cell) != cellsInBox.end())
+						return;
+					mutated |= cell.unmark(it->first);
+				};
+
+				// Iterating thru the rows first
+				for (_Ty r = bx / ROOT_N; r < r + ROOT_N; ++r) {
+					if (std::any_of(board.row(r).begin(), board.row(r).end(), pred))
+						continue;
+					// We need to make sure there is at least 1 cell in this row with the marking
+					auto n = std::count_if(cellsInBox.begin(), cellsInBox.end(), pred2);
+					if (n == 1) {
+						for (_Ty x = 0; x < cellsInBox.size(); ++x) {
+							if (cellsInBox[x].getRowIndex() == r) {
+								cellsInBox[x].setValue(it->first);
+								return true;
+							}
+						}
+					} else if (n > 1) {
+						std::for_each(board.box(bx).begin(), board.box(bx).end(), func);
+					}
+				}
+
+				// Iterating thru the cols next
+				for (_Ty c = bx % ROOT_N; c < c + ROOT_N; ++c) {
+					if (std::any_of(board.col(c).begin(), board.col(c).end(), pred))
+						continue;
+					// We need to make sure there is at least 1 cell in this row with the marking
+					auto n = std::count_if(cellsInBox.begin(), cellsInBox.end(), pred2);
+					if (n == 1) {
+						for (_Ty x = 0; x < cellsInBox.size(); ++x) {
+							if (cellsInBox[x].getColIndex() == x) {
+								cellsInBox[x].setValue(it->first);
+								return true;
+							}
+						}
+					} else if (n > 1) {
+						std::for_each(board.box(bx).begin(), board.box(bx).end(), func);
+					}
+				}
+			} else if (cellsInBox.size() >= 2) { // This means they could all be aligned on a row or column inside the box
+				// Checking if the cells are aligned on any rows or cols
+
+				bool alignedOnRow = std::all_of(cellsInBox.cbegin(), cellsInBox.cend(), [&cellsInBox](const Cell<_Ty, _N> & cell) {
+					return cell.getRowIndex() == cellsInBox[0].getRowIndex();
+				});
+				bool alignedOnCol = std::all_of(cellsInBox.cbegin(), cellsInBox.cend(), [&cellsInBox](const Cell<_Ty, _N> & cell) {
+					return cell.getColIndex() == cellsInBox[0].getColIndex();
+				});
+
+				if (alignedOnRow || alignedOnCol) { // Condition 3a or 3b are satisfied
+
+					_Ty z = alignedOnRow ? cellsInBox[0].getRowIndex() : cellsInBox[0].getColIndex();
+					Unit<_Ty, _N> u = alignedOnRow ? board.row(z) : board.col(z);
+
+					std::for_each(u.begin(), u.end(), [&cellsInBox, &mutated](Cell<_Ty, _N> & cell) {
+						if (!cell.isEmpty() || std::find(cellsInBox.begin(), cellsInBox.end(), cell) != cellsInBox.end())
+							return;
+						mutated |= cell.unmark(it->first);
+					});
+				}
+			}
+		}
+	}
+	return mutated;
 };
 
 ALGORITHM_TEMPLATE
