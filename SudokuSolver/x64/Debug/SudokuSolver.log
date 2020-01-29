@@ -19,6 +19,6 @@ c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cp
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(29): note: see declaration of 'SudokuAlgorithms::intersectionRemoval'
 c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(229): warning C4348: 'SudokuAlgorithms::xwing': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(31): note: see declaration of 'SudokuAlgorithms::xwing'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(334): warning C4348: 'SudokuAlgorithms::ywing': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(333): warning C4348: 'SudokuAlgorithms::ywing': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(33): note: see declaration of 'SudokuAlgorithms::ywing'
   SudokuSolver.vcxproj -> C:\Users\Grayson Spidle\Documents\GitHub\SudokuSolver\x64\Debug\SudokuSolver.exe

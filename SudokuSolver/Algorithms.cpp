@@ -250,7 +250,7 @@ bool SudokuAlgorithms::xwing(Board<_Ty, _N> & board) {
 			continue;
 
 		// We're gonna try to find the diagonal corner b/c it'd cut down on the amount of crap we have to iterate through
-		/* Here are some diagrams to put the variable names to virtual positions on the board.
+		/* Here are some diagrams to visualize the variable names to the positions on the board.
 		cell1---------cell2        cell3---------cell4        cell4---------cell3        cell2---------cell1
 		  |             |            |             |            |             |            |             |
 		  |             |     or     |             |     or     |             |     or     |             |
@@ -267,7 +267,7 @@ bool SudokuAlgorithms::xwing(Board<_Ty, _N> & board) {
 				if (cell1 == cell4)
 					continue; // Skipping duplicates (cells must be unique)
 				_Ty boxIndex4 = getBoxIndex(cell4.getRowIndex(), cell4.getColIndex(), ROOT_N);
-				_Ty boardBoxRowIndex4 = floor(boxIndex4 / ROOT_N);
+				_Ty boardBoxRowIndex4 = boxIndex4 / ROOT_N;
 				_Ty boardBoxColIndex4 = boxIndex4 % ROOT_N;
 
 				// Now we'll check if the two indices are either in the same row of boxes or in the same column of boxes, which will satisfy condition 2.
@@ -291,11 +291,11 @@ bool SudokuAlgorithms::xwing(Board<_Ty, _N> & board) {
 				then we have an xwing and condition 4 will be satisfied.
 				*/
 
-				auto rowCount1 = board.row(cell1.getRowIndex()).countCellMark(it->first);
-				auto colCount1 = board.col(cell1.getColIndex()).countCellMark(it->first);
+				auto rowCount1 = board.row(cell1.getRowIndex()).countCellsMarkedWith(it->first);
+				auto colCount1 = board.col(cell1.getColIndex()).countCellsMarkedWith(it->first);
 
-				auto rowCount4 = board.row(cell4.getRowIndex()).countCellMark(it->first);
-				auto colCount4 = board.col(cell4.getColIndex()).countCellMark(it->first);
+				auto rowCount4 = board.row(cell4.getRowIndex()).countCellsMarkedWith(it->first);
+				auto colCount4 = board.col(cell4.getColIndex()).countCellsMarkedWith(it->first);
 
 				auto func1 = [&cell1, &cell3, &it](Cell<_Ty, _N> & c) { // Function we'll use for removing markings
 					if (c == cell1 || c == cell3)
@@ -328,11 +328,24 @@ bool SudokuAlgorithms::xwing(Board<_Ty, _N> & board) {
 		}
 	}
 	return false;
-
 };
 
 ALGORITHM_TEMPLATE
-bool SudokuAlgorithms::ywing(Board<_Ty, _N> & board) {};
+bool SudokuAlgorithms::ywing(Board<_Ty, _N> & board) {
+	/* https://www.sudokuwiki.org/Y_Wing_Strategy
+	Conditions to satisfy:
+	1. Looking for exactly 3 unique cells laid out like one of the following:
+		1a. 2 of the 3 cells share the same box, but those 2 cells cannot share the same row or column and the last cell must share a row xor column with 1 of the 2 cells
+		1b. All 3 cells are in their own boxes, each cell is a corner of a right triangle.
+	2. For this condition, we'll use arbitrary cells named A, B, and C. We'll also use arbitrary markings a,b, and c to make this clearer:
+		2a. Cells A and B must share markings a and b
+
+	If conditions are met:
+	- do stuff
+	*/
+
+	return false;
+};
 
 
 
