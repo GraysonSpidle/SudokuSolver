@@ -15,10 +15,10 @@ c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cp
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(25): note: see declaration of 'SudokuAlgorithms::hiddenSequence'
 c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(183): warning C4348: 'SudokuAlgorithms::hiddenSequence': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(27): note: see declaration of 'SudokuAlgorithms::hiddenSequence'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(186): warning C4348: 'SudokuAlgorithms::intersectionRemoval': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(194): warning C4348: 'SudokuAlgorithms::intersectionRemoval': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(29): note: see declaration of 'SudokuAlgorithms::intersectionRemoval'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(189): warning C4348: 'SudokuAlgorithms::xwing': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(197): warning C4348: 'SudokuAlgorithms::xwing': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(31): note: see declaration of 'SudokuAlgorithms::xwing'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(192): warning C4348: 'SudokuAlgorithms::ywing': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(200): warning C4348: 'SudokuAlgorithms::ywing': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(33): note: see declaration of 'SudokuAlgorithms::ywing'
   SudokuSolver.vcxproj -> C:\Users\Grayson Spidle\Documents\GitHub\SudokuSolver\x64\Debug\SudokuSolver.exe

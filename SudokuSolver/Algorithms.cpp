@@ -181,7 +181,15 @@ bool SudokuAlgorithms::hiddenSequence(Unit<_Ty, _N> & unit) {
 };
 
 ALGORITHM_TEMPLATE
-bool SudokuAlgorithms::hiddenSequence(Board<_Ty, _N> & board) {};
+bool SudokuAlgorithms::hiddenSequence(Board<_Ty, _N> & board) {
+	bool mutated = false;
+	for (_Ty i = 0; i < _N; i++) {
+		mutated |= hiddenSequence(board.box(i));
+		mutated |= hiddenSequence(board.row(i));
+		mutated |= hiddenSequence(board.col(i));
+	}
+	return mutated;
+};
 
 ALGORITHM_TEMPLATE
 bool SudokuAlgorithms::intersectionRemoval(Board<_Ty, _N> & board) {};
