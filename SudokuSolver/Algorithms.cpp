@@ -4,6 +4,7 @@
 #include <vector>
 
 #define EMPTY_VALUE Cell<_Ty, _N>::EMPTY_VALUE
+#define ROOT_N Board<_Ty, _N>::ROOT_N
 
 ALGORITHM_TEMPLATE
 bool SudokuAlgorithms::removeMarkings(Unit<_Ty, _N> & unit) {
@@ -120,6 +121,19 @@ std::map<_Ty, std::vector<Cell<_Ty, _N>>> mapCellsToMarks(Unit<_Ty, _N> & unit) 
 };
 
 ALGORITHM_TEMPLATE
+std::map<_Ty, std::vector<Cell<_Ty, _N>>> mapCellsToMarks(Board<_Ty, _N> & board) {
+	auto output = std::map<_Ty, std::vector<Cell<_Ty, _N>>>();
+	for (_Ty m = 1; m <= _N; m++) {
+		output[m] = std::vector<Cell<_Ty, _N>>();
+		for (_Ty i = 0; i < _N * _N; ++i) {
+			if (board.cell(i).containsMark(m))
+				output[m].push_back(board.cell(i));
+		}
+	}
+	return output;
+};
+
+ALGORITHM_TEMPLATE
 std::vector<_Ty> markingIntersection(std::vector<Cell<_Ty, _N>> & arg0) {
 	auto output = std::vector<_Ty>();
 	auto start = std::find_if(arg0.begin(), arg0.end(), [](Cell<_Ty, _N> & cell) {
@@ -171,7 +185,7 @@ bool SudokuAlgorithms::hiddenSequence(Unit<_Ty, _N> & unit) {
 
 		for (Cell<_Ty, _N> & cell : it->second) {
 			mutated |= cell.resetMarks();
-			for (int marking : sharedMarkings) {
+			for (_Ty marking : sharedMarkings) {
 				mutated |= cell.mark(marking);
 			}
 		}
@@ -192,10 +206,130 @@ bool SudokuAlgorithms::hiddenSequence(Board<_Ty, _N> & board) {
 };
 
 ALGORITHM_TEMPLATE
-bool SudokuAlgorithms::intersectionRemoval(Board<_Ty, _N> & board) {};
+bool SudokuAlgorithms::intersectionRemoval(Board<_Ty, _N> & board) {
+	/* Assumptions:
+	n = the size of the user supplied board.
+
+	Conditions to satisfy:
+	1. Looking for at least 2 empty unique cells.
+	2. These cells must all share 1 marking.
+	3. The cells must be all in the same box and must meet 1 of the following sub-conditions:
+		3a. The cells must be aligned on the same row and they must be the only cells with the shared marking in the row or box.
+		3b. The cells must be aligned on the same column and they must be the only cells with the shared marking in the column or box.
+	If all conditions are satisfied:
+	- the action varies depending on which sub-conditions are satisfied
+	*/
+
+
+	// TODO
+
+	return false;
+};
 
 ALGORITHM_TEMPLATE
-bool SudokuAlgorithms::xwing(Board<_Ty, _N> & board) {};
+bool SudokuAlgorithms::xwing(Board<_Ty, _N> & board) {
+	/* https://www.sudokuwiki.org/X_Wing_Strategy
+	Conditions to satisfy:
+	1. Looking for exactly 4 unique cells that are four corners of an imaginary rectangle.
+	2. These corners must be in their own boxes.
+	3. These cells must each share a singular marking with each other. (ie all 4 cells must be marked with a 7)
+	4. These cells must meet either, but not both (b/c there would be nothing to change), of these two conditions:
+		4a. Looking at the cells' rows, both rows of corners only have those 2 cells as possible candidates for the marking in question.
+		4b. Looking at the cells' columns, both columns of corners only have those 2 cells as possible candidates for the marking in question.
+
+	- If all conditions are met, then you do one of two things depending on which of the previous conditions were met:
+		- Looking at the cells' columns, remove the marking from all other cells in the column.
+		- Looking at the cells' rows, remove the marking from all other cells in the row.
+
+	Applies this algorithm to the first xwing it finds.
+	*/
+
+	auto markingMap = mapCellsToMarks(board); // Satisfies condition 3 b/c we'll be iterating thru the pairs
+	for (auto it = markingMap.begin(); it != markingMap.end(); ++it) {
+		if (it->second.size() < 4) // Partially satisfies the condition 1's quantity requirement
+			continue;
+
+		// We're gonna try to find the diagonal corner b/c it'd cut down on the amount of crap we have to iterate through
+		/* Here are some diagrams to put the variable names to virtual positions on the board.
+		cell1---------cell2        cell3---------cell4        cell4---------cell3        cell2---------cell1
+		  |             |            |             |            |             |            |             |
+		  |             |     or     |             |     or     |             |     or     |             |
+		  |             |            |             |            |             |            |             |
+		cell3---------cell4        cell1---------cell2        cell2---------cell1        cell4---------cell3
+		*/
+
+		for (Cell<_Ty, _N> & cell1 : it->second) {
+			_Ty boxIndex1 = cell1.getBoxIndex();
+			_Ty boardBoxRowIndex1 = boxIndex1 / ROOT_N;
+			_Ty boardBoxColIndex1 = boxIndex1 % ROOT_N;
+
+			for (Cell<_Ty, _N> & cell4 : it->second) {
+				if (cell1 == cell4)
+					continue; // Skipping duplicates (cells must be unique)
+				_Ty boxIndex4 = getBoxIndex(cell4.getRowIndex(), cell4.getColIndex(), ROOT_N);
+				_Ty boardBoxRowIndex4 = floor(boxIndex4 / ROOT_N);
+				_Ty boardBoxColIndex4 = boxIndex4 % ROOT_N;
+
+				// Now we'll check if the two indices are either in the same row of boxes or in the same column of boxes, which will satisfy condition 2.
+				if (boardBoxRowIndex1 == boardBoxRowIndex4 || boardBoxColIndex1 == boardBoxColIndex4)
+					continue; // Skipping if the condition isn't met
+
+
+				// Now we know that cell1 and cell4 are in fact in boxes that are diagonal from each other.
+				// Now we're going to be checking if the other 2 corners share the same mark, thus satisfying the rest of condition 1 and condition 3.
+
+				Cell<_Ty, _N> & cell2 = board.cell(cell1.getRowIndex(), cell4.getColIndex());
+				Cell<_Ty, _N> & cell3 = board.cell(cell4.getRowIndex(), cell1.getColIndex());
+
+				if (!cell2.containsMark(it->first) || !cell3.containsMark(it->first))
+					continue; // Skipping if the condition isn't met
+
+
+				/* Now we're going to try to satisfy condition 4.
+
+				We'll do this by counting how many markings are in the cell's rows and cols and if the row count xor the col count is exactly 2,
+				then we have an xwing and condition 4 will be satisfied.
+				*/
+
+				auto rowCount1 = board.row(cell1.getRowIndex()).countCellMark(it->first);
+				auto colCount1 = board.col(cell1.getColIndex()).countCellMark(it->first);
+
+				auto rowCount4 = board.row(cell4.getRowIndex()).countCellMark(it->first);
+				auto colCount4 = board.col(cell4.getColIndex()).countCellMark(it->first);
+
+				auto func1 = [&cell1, &cell3, &it](Cell<_Ty, _N> & c) { // Function we'll use for removing markings
+					if (c == cell1 || c == cell3)
+						return;
+					c.unmark(it->first);
+				};
+
+				auto func4 = [&cell4, &cell2, &it](Cell<_Ty, _N> & c) { // Function we'll use for removing markings
+					if (c == cell4 || c == cell2)
+						return;
+					c.unmark(it->first);
+				};
+
+				if ((rowCount1 == 2 && rowCount4 == 2) && (colCount1 > 2 || colCount4 > 2)) { // We added this other condition that ensures we actually need to do anything
+					// Condition 4a satisfied. Now we'll remove the marking from all the cells except the four cells
+					auto col1 = board.col(cell1.getColIndex());
+					auto col4 = board.col(cell4.getColIndex());
+					std::for_each(col1.begin(), col1.end(), func1);
+					std::for_each(col4.begin(), col4.end(), func4);
+					return true; // returning true b/c we have mutated the board
+				} else if ((colCount1 == 2 && colCount4 == 2) && (rowCount1 > 2 || rowCount4 > 2)) {
+					// Condition 4b satisfied. Now we'll remove the marking from all the cells except the four cells
+					auto row1 = board.row(cell1.getRowIndex());
+					auto row4 = board.row(cell4.getRowIndex());
+					std::for_each(row1.begin(), row1.end(), func1);
+					std::for_each(row4.begin(), row4.end(), func4);
+					return true; // returning true b/c we have mutated the board
+				}
+			}
+		}
+	}
+	return false;
+
+};
 
 ALGORITHM_TEMPLATE
 bool SudokuAlgorithms::ywing(Board<_Ty, _N> & board) {};
