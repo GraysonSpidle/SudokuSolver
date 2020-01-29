@@ -1,24 +1,24 @@
 ﻿  Algorithms.cpp
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(6): warning C4348: 'SudokuAlgorithms::removeMarkings': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(8): warning C4348: 'SudokuAlgorithms::removeMarkings': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(13): note: see declaration of 'SudokuAlgorithms::removeMarkings'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(25): warning C4348: 'SudokuAlgorithms::removeMarkings': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(27): warning C4348: 'SudokuAlgorithms::removeMarkings': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(15): note: see declaration of 'SudokuAlgorithms::removeMarkings'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(36): warning C4348: 'SudokuAlgorithms::nakedSingle': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(38): warning C4348: 'SudokuAlgorithms::nakedSingle': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(17): note: see declaration of 'SudokuAlgorithms::nakedSingle'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(56): warning C4348: 'SudokuAlgorithms::nakedSingle': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(58): warning C4348: 'SudokuAlgorithms::nakedSingle': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(19): note: see declaration of 'SudokuAlgorithms::nakedSingle'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(76): warning C4348: 'SudokuAlgorithms::hiddenSingle': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(78): warning C4348: 'SudokuAlgorithms::hiddenSingle': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(21): note: see declaration of 'SudokuAlgorithms::hiddenSingle'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(96): warning C4348: 'SudokuAlgorithms::hiddenSingle': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(98): warning C4348: 'SudokuAlgorithms::hiddenSingle': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(23): note: see declaration of 'SudokuAlgorithms::hiddenSingle'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(107): warning C4348: 'SudokuAlgorithms::hiddenSequence': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(142): warning C4348: 'SudokuAlgorithms::hiddenSequence': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(25): note: see declaration of 'SudokuAlgorithms::hiddenSequence'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(110): warning C4348: 'SudokuAlgorithms::hiddenSequence': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(183): warning C4348: 'SudokuAlgorithms::hiddenSequence': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(27): note: see declaration of 'SudokuAlgorithms::hiddenSequence'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(113): warning C4348: 'SudokuAlgorithms::intersectionRemoval': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(186): warning C4348: 'SudokuAlgorithms::intersectionRemoval': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(29): note: see declaration of 'SudokuAlgorithms::intersectionRemoval'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(116): warning C4348: 'SudokuAlgorithms::xwing': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(189): warning C4348: 'SudokuAlgorithms::xwing': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(31): note: see declaration of 'SudokuAlgorithms::xwing'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(119): warning C4348: 'SudokuAlgorithms::ywing': redefinition of default parameter: parameter 3
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(192): warning C4348: 'SudokuAlgorithms::ywing': redefinition of default parameter: parameter 3
   c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(33): note: see declaration of 'SudokuAlgorithms::ywing'
   SudokuSolver.vcxproj -> C:\Users\Grayson Spidle\Documents\GitHub\SudokuSolver\x64\Debug\SudokuSolver.exe

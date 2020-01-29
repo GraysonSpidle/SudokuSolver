@@ -128,6 +128,8 @@ public:
 	const _Ty & getBoxIndex() const { return box; }
 
 	bool containsMark(const _Ty & marking) const {
+		if (!isEmpty())
+			return false;
 		return std::find(markings.cbegin(), markings.cend(), marking) != markings.cend();
 	}
 
@@ -135,16 +137,6 @@ public:
 		return std::count_if(markings.cbegin(), markings.cend(), [&EMPTY_VALUE](const _Ty & marking) {
 			return marking != EMPTY_VALUE;
 		});
-	}
-
-	// gets non-empty marks
-	std::vector<Cell<_Ty, _N>> getMarks() const {
-		auto output = std::vector<Cell<_Ty, _N>>();
-		for (_Ty i = 0; i < _N; ++i) {
-			if (markings[i] != EMPTY_VALUE)
-				output.push_back(markings[i]);
-		}
-		return output;
 	}
 
 	bool mark(_Ty & marking) {
