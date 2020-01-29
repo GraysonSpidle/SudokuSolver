@@ -1,6 +1,8 @@
 #pragma once
 #include <array>
+#include <algorithm>
 #include <cassert>
+#include <vector>
 #include "Utils.h"
 
 template <
@@ -37,7 +39,7 @@ class Cell {
 		return rootSize * num1 + num2;
 	};
 public:
-	_Ty EMPTY_VALUE = 0;
+	static const _Ty EMPTY_VALUE = 0;
 
 	// ===============================================================================
 	//							 Constructors / Destructors
@@ -55,13 +57,14 @@ public:
 	Cell(_Ty row, _Ty col, _Ty value, bool isStatic)
 		: value(value), row(row), col(col), box(getBoxIndex(row, col)), _isStatic(isStatic) {
 		
-		assert(!isStatic && this->isEmpty()); // We must ensure that any cell constructed cannot be static and empty.
-
-		markings = std::array<_Ty, _N>();
-		for (_Ty i = 0; i < _N; ++i) {
-			markings[i] = i + 1;
-		}
+		assert((!_isStatic && isEmpty()) || (_isStatic && !isEmpty())); // We must ensure that any cell constructed cannot be static and empty.
 		
+		if (isEmpty()) {
+			markings = std::array<_Ty, _N>();
+			for (_Ty i = 0; i < _N; ++i) {
+				markings[i] = i + 1;
+			}
+		}
 	};
 
 	Cell(const _Ty row, const _Ty col, _Ty value)
@@ -80,6 +83,22 @@ public:
 	// ===============================================================================
 	//								Member Functions
 	// ===============================================================================
+
+	// gets non-empty marks will return empty values if there are no more non-empty markings
+	_Ty & operator[](_Ty i) {
+		if (!isEmpty())
+			return EMPTY_VALUE;
+		_Ty n = 0;
+		for (_Ty k = 0; k < _N; ++k) {
+			if (markings[k] != EMPTY_VALUE) {
+				if (n == i)
+					return markings[k];
+				else
+					n++;
+			}
+		}
+		return EMPTY_VALUE;
+	}
 
 	bool isEmpty() const { return value == Cell<_Ty, _N>::EMPTY_VALUE; }
 	bool isStatic() const { return _isStatic; }
@@ -116,6 +135,16 @@ public:
 		return std::count_if(markings.cbegin(), markings.cend(), [&EMPTY_VALUE](const _Ty & marking) {
 			return marking != EMPTY_VALUE;
 		});
+	}
+
+	// gets non-empty marks
+	std::vector<Cell<_Ty, _N>> getMarks() const {
+		auto output = std::vector<Cell<_Ty, _N>>();
+		for (_Ty i = 0; i < _N; ++i) {
+			if (markings[i] != EMPTY_VALUE)
+				output.push_back(markings[i]);
+		}
+		return output;
 	}
 
 	bool mark(_Ty & marking) {

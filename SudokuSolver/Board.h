@@ -15,6 +15,8 @@ class Board {
 	std::array<Unit<_Ty, _N>, _N>       cols;
 	std::array<Unit<_Ty, _N>, _N>      boxes;
 
+	static constexpr const _Ty ROOT_N = SudokuUtils::isqrt(_N);
+
 public:
 	// ===============================================================================
 	//							 Constructors / Destructors
@@ -45,5 +47,11 @@ public:
 	//								Member Functions
 	// ===============================================================================
 
+	Cell<_Ty, _N> & cell(_Ty i) { return cells[i]; }
+	Cell<_Ty, _N> & cell(_Ty r, _Ty c) { return rows[r][c]; }
+	Unit<_Ty, _N> & row(_Ty i) { return rows[i]; }
+	Unit<_Ty, _N> & col(_Ty i) { return cols[i]; }
+	Unit<_Ty, _N> & box(_Ty i) { return boxes[i]; }
+	Unit<_Ty, _N> & box(_Ty r, _Ty c) { return  box(ROOT_N * (r / ROOT_N) + (c / ROOT_N)); }
 
 };
