@@ -1,0 +1,6 @@
+﻿  Algorithms.cpp
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(4): warning C4348: 'SudokuAlgorithms::removeMarkings': redefinition of default parameter: parameter 3
+  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(11): note: see declaration of 'SudokuAlgorithms::removeMarkings'
+  SudokuSolver.cpp
+  Generating Code...
+  SudokuSolver.vcxproj -> C:\Users\Grayson Spidle\Documents\GitHub\SudokuSolver\x64\Debug\SudokuSolver.exe
