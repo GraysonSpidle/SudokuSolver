@@ -30,12 +30,10 @@ public:
 			_Ty cellRow = i / _N; // this should do floor division
 			_Ty cellCol = i % _N; // this should work since they're both not a double or float b/c those data types cannot be unsigned
 			
-			Cell<_Ty, _N> cell(cellRow, cellCol, raw[i]);
-
-			cells[i]                         = Cell<_Ty, _N>(cell);
-			rows[cellRow][cellCol]           = cell; // Shallow copying
-			cols[cellCol][cellRow]           = cell; // Shallow copying
-			boxes[cells[i].getBoxIndex()][i] = cell; // Shallow copying
+			cells[i]                         = Cell<_Ty, _N>(cellRow, cellCol, raw[i]);
+			rows[cellRow][cellCol]           = cells[i]; // Shallow copying
+			cols[cellCol][cellRow]           = cells[i]; // Shallow copying
+			boxes[cells[i].getBoxIndex()][i] = cells[i]; // Shallow copying
 		}
 
 	};

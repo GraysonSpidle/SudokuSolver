@@ -16,7 +16,6 @@ class Unit {
 	std::array< Cell<_Ty, _N>, _N > cells;
 	std::array< BoxUnit, _N >     boxRows;
 	std::array< BoxUnit, _N >     boxCols;
-	_Ty                             index; // index for the row/col/box (depending on what the unit is)
 public:
 	// ===============================================================================
 	//							 Constructors / Destructors
@@ -40,6 +39,8 @@ public:
 			boxRows[row][col] = Cell<_Ty, _N>(cells[i]); // Shallow copying
 			boxCols[col][row] = Cell<_Ty, _N>(cells[i]); // Shallow copying
 		}
+
+
 	}
 
 	Unit(std::array<Cell<_Ty, _N>, _N> && cells)
