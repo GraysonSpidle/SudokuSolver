@@ -30,6 +30,15 @@
     <ClInclude Include="Algorithms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AbstractCell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractUnit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractBoard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Board.h">
       <Filter>Header Files</Filter>
     </ClInclude>

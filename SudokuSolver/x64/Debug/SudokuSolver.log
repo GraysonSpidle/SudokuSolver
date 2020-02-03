@@ -1,24 +1,55 @@
-﻿  Algorithms.cpp
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(9): warning C4348: 'SudokuAlgorithms::removeMarkings': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(13): note: see declaration of 'SudokuAlgorithms::removeMarkings'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(28): warning C4348: 'SudokuAlgorithms::removeMarkings': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(15): note: see declaration of 'SudokuAlgorithms::removeMarkings'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(39): warning C4348: 'SudokuAlgorithms::nakedSingle': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(17): note: see declaration of 'SudokuAlgorithms::nakedSingle'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(59): warning C4348: 'SudokuAlgorithms::nakedSingle': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(19): note: see declaration of 'SudokuAlgorithms::nakedSingle'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(79): warning C4348: 'SudokuAlgorithms::hiddenSingle': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(21): note: see declaration of 'SudokuAlgorithms::hiddenSingle'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(99): warning C4348: 'SudokuAlgorithms::hiddenSingle': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(23): note: see declaration of 'SudokuAlgorithms::hiddenSingle'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(156): warning C4348: 'SudokuAlgorithms::hiddenSequence': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(25): note: see declaration of 'SudokuAlgorithms::hiddenSequence'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(197): warning C4348: 'SudokuAlgorithms::hiddenSequence': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(27): note: see declaration of 'SudokuAlgorithms::hiddenSequence'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(208): warning C4348: 'SudokuAlgorithms::intersectionRemoval': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(29): note: see declaration of 'SudokuAlgorithms::intersectionRemoval'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(322): warning C4348: 'SudokuAlgorithms::xwing': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(31): note: see declaration of 'SudokuAlgorithms::xwing'
-c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.cpp(426): warning C4348: 'SudokuAlgorithms::ywing': redefinition of default parameter: parameter 3
-  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\algorithms.h(33): note: see declaration of 'SudokuAlgorithms::ywing'
+﻿  SudokuSolver.cpp
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\sudokusolver.cpp(103): warning C4348: 'testBoardLayout': redefinition of default parameter: parameter 3
+  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\sudokusolver.cpp(18): note: see declaration of 'testBoardLayout'
+c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\unit.h(97): warning C4244: 'return': conversion from '__int64' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=_Ty
+          ]
+  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\unit.h(96): note: while compiling class template member function '_Ty Unit<_Ty,9,std::enable_if<true,void>>::countCellsMarkedWith(_Ty) const'
+          with
+          [
+              _Ty=_Ty
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\array(225): note: see reference to class template instantiation 'Unit<_Ty,9,std::enable_if<true,void>>' being compiled
+          with
+          [
+              _Ty=_Ty
+          ]
+  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\board2.h(11): note: see reference to class template instantiation 'std::array<Unit<_Ty,9,std::enable_if<true,void>>,9>' being compiled
+          with
+          [
+              _Ty=_Ty
+          ]
+  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\sudokusolver.cpp(82): note: see reference to class template instantiation 'Board2<_Ty,9,std::enable_if<true,void>>' being compiled
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.16.27023\include\utility(172): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+          and
+          [
+              _Ty1=_Ty
+          ]
+  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\utils.h(46): note: see reference to function template instantiation 'std::pair<_Ty,_Ty>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Ty=_Ty,
+              _Other1=double,
+              _Other2=int
+          ]
+  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\utils.h(46): note: see reference to function template instantiation 'std::pair<_Ty,_Ty>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Ty=_Ty,
+              _Other1=double,
+              _Other2=int
+          ]
+  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\board2.h(26): note: see reference to function template instantiation 'std::pair<_Ty,_Ty> SudokuUtils::calculateLocalBoxCoords<_Ty,std::enable_if<true,void>>(_Ty,_Ty,_Ty)' being compiled
+          with
+          [
+              _Ty=_Ty
+          ]
+  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\board2.h(15): note: while compiling class template member function 'Board2<_Ty,9,std::enable_if<true,void>>::Board2(std::array<_Ty,81> &)'
+  c:\users\grayson spidle\documents\github\sudokusolver\sudokusolver\sudokusolver.cpp(82): note: see reference to function template instantiation 'Board2<_Ty,9,std::enable_if<true,void>>::Board2(std::array<_Ty,81> &)' being compiled
   SudokuSolver.vcxproj -> C:\Users\Grayson Spidle\Documents\GitHub\SudokuSolver\x64\Debug\SudokuSolver.exe

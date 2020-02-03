@@ -4,3 +4,4 @@
 
 
 #define ALGORITHM_TEMPLATE
+#define SUDOKU_TEMPLATE

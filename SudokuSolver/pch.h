@@ -12,3 +12,7 @@
 // TODO: add headers that you want to pre-compile here
 
 #endif //PCH_H
+
+#ifndef SUDOKU_TEMPLATE
+#define SUDOKU_TEMPLATE template <class _Ty, const _Ty _N, typename = std::enable_if<std::is_arithmetic<_Ty>::value && std::is_unsigned<_Ty>::value>>
+#endif

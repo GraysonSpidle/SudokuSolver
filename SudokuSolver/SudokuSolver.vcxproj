@@ -151,9 +151,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AbstractBoard.h" />
+    <ClInclude Include="AbstractCell.h" />
     <ClInclude Include="Algorithms.h" />
-    <ClInclude Include="Cell.h" />
     <ClInclude Include="Board.h" />
+    <ClInclude Include="Cell.h" />
+    <ClInclude Include="AbstractUnit.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Utils.h" />

@@ -1,83 +1,42 @@
 #pragma once
 #include <array>
 #include <algorithm>
+#include <memory>
 #include <cassert>
 #include <vector>
+#include "AbstractCell.h"
 #include "Utils.h"
 
-template <
-	class _Ty, // the data type to use for the values and the markings
-	_Ty _N, // how many total markings there could be
-	typename = std::enable_if<std::is_arithmetic<_Ty>::value && std::is_unsigned<_Ty>::value> // requiring that _Ty is an unsigned number
->
-class Cell {
-	_Ty				         row;
-	_Ty                      col;
-	_Ty                      box;
-	_Ty                    value;
-	bool               _isStatic;
-	std::array<_Ty, _N> markings;
-	
-	constexpr const _Ty getBoxIndex(_Ty row, _Ty col) {
-		/* Box indices are laid out like this (for a traditional 9x9 sudoku board)
-				|		|		|
-			0	|	1	|	2	|
-				|		|		|
-		-------------------------
-				|		|		|
-			3	|	4	|	5	|
-				|		|		|
-		-------------------------
-				|		|		|
-			6	|	7	|	8	|
-				|		|		|
+SUDOKU_TEMPLATE
+class Cell : public AbstractCell<_Ty, _N> {
+	using ptr = std::shared_ptr<_Ty>;
 
-		*/
-		_Ty rootSize = SudokuUtils::isqrt(_N);
-		_Ty num1 = row / rootSize; // This should be the same thing as floor division since doubles and floats cannot be unsigned
-		_Ty num2 = col / rootSize; // This should be the same thing as floor division since doubles and floats cannot be unsigned
-		return rootSize * num1 + num2;
-	};
+	ptr      rowNum;
+	ptr      colNum;
+	ptr       value;
+	bool   _isStatic;
 public:
-	static const _Ty EMPTY_VALUE = 0;
+	std::shared_ptr<std::array<_Ty, _N>> markings;
 
 	// ===============================================================================
 	//							 Constructors / Destructors
 	// ===============================================================================
 
-	Cell(_Ty row, _Ty col, _Ty value, bool isStatic, std::array<_Ty, _N> && markings) 
-		: row(row), col(col), box(getBoxIndex(row, col)) {
-		this->value = value;
-		this->_isStatic = isStatic;
-		this->markings = markings;
-		
-		assert(!isStatic && this->isEmpty()); // We must ensure that any cell constructed cannot be static and empty.
-	};
-
-	Cell(_Ty row, _Ty col, _Ty value, bool isStatic)
-		: value(value), row(row), col(col), box(getBoxIndex(row, col)), _isStatic(isStatic) {
-		
-		assert((!_isStatic && isEmpty()) || (_isStatic && !isEmpty())); // We must ensure that any cell constructed cannot be static and empty.
-		
-		if (isEmpty()) {
-			markings = std::array<_Ty, _N>();
-			for (_Ty i = 0; i < _N; ++i) {
-				markings[i] = i + 1;
-			}
+	Cell(_Ty && row, _Ty && col, _Ty && value, bool isStatic = false)
+		: rowNum(new _Ty(row)), colNum(new _Ty(col)), value(new _Ty(value)), _isStatic(isStatic), markings(new std::array<_Ty, _N>) {
+		for (_Ty i = 0; i < _N; ++i) {
+			(*markings)[i] = i + 1;
 		}
 	};
 
-	Cell(const _Ty row, const _Ty col, _Ty value)
-		: Cell<_Ty, _N>(row, col, value, value != Cell<_Ty, _N>::EMPTY_VALUE) {};
-
-	explicit Cell(_Ty value)
-		: Cell<_Ty, _N>(0, 0, value) {};
+	explicit Cell(_Ty && value)
+		: Cell(0, 0, value, value != 0) {};
 
 	Cell() 
-		: Cell<_Ty, _N>(Cell<_Ty, _N>::EMPTY_VALUE) {};
+		: Cell(0, 0, 0, false) {};
 	
 	~Cell() {
-		// Hopefully RAII will save us.
+		// RAII pls halp w/ memory management
 	};
 
 	// ===============================================================================
@@ -85,89 +44,100 @@ public:
 	// ===============================================================================
 
 	// gets non-empty marks will return empty values if there are no more non-empty markings
-	_Ty & operator[](_Ty i) {
+	_Ty operator[](_Ty i) override {
 		if (!isEmpty())
-			return EMPTY_VALUE;
+			return 0;
 		_Ty n = 0;
 		for (_Ty k = 0; k < _N; ++k) {
-			if (markings[k] != EMPTY_VALUE) {
+			if ((*markings)[k] != 0) {
 				if (n == i)
-					return markings[k];
+					return (*markings)[k];
 				else
 					n++;
 			}
 		}
-		return EMPTY_VALUE;
+		return 0;
+	}
+	bool operator==(const AbstractCell<_Ty, _N> & other) const override {
+		return *value == other.getValue() && *rowNum == other.getRowIndex() && *colNum == other.getColIndex() && getBoxIndex() == other.getBoxIndex();
 	}
 
-	bool isEmpty() const { return value == Cell<_Ty, _N>::EMPTY_VALUE; }
-	bool isStatic() const { return _isStatic; }
+	bool operator==(const Cell<_Ty, _N> & other) const {
+		return rowNum == other.rowNum && colNum == other.colNum && getBoxIndex() == other.getBoxIndex() && markings == other.markings;
+	}
+
+	bool isEmpty() const override { return (*value) == 0; }
+	bool isStatic() const override { return _isStatic; }
 	void setStatic(bool _static) {
 		_isStatic = _static;
 	}
-	
-	_Ty & getValue() const { return value; }
 
-	bool setValue(_Ty & newValue) {
-		value = newValue;
+	_Ty getValue() const override { return *this->value; }
+
+	bool setValue(_Ty newValue) override {
+		*value = newValue;
 		return true;
 	}
 
-	const _Ty & getRowIndex() const { return row; }
-	void setRowIndex(_Ty & index) { 
+	_Ty getRowIndex() const override { return *rowNum; }
+	void setRowIndex(_Ty index) override {
 		assert(index < _N);
-		row = index; 
-		box = getBoxIndex(row, col);
+		*rowNum = index; 
 	}
-	const _Ty & getColIndex() const { return col; }
-	void setColIndex(_Ty & index) {
+	_Ty getColIndex() const override { return *colNum; }
+	void setColIndex(_Ty index) override {
 		assert(index < _N);
-		col = index;
-		box = getBoxIndex(row,col);
+		*colNum = index;
 	}
-	const _Ty & getBoxIndex() const { return box; }
+	_Ty getBoxIndex() const override { 
+		return this->ROOT_N * ((*rowNum) / this->ROOT_N) + ((*colNum) / this->ROOT_N);
+	}
 
-	bool containsMark(const _Ty & marking) const {
+	bool containsMark(const _Ty & marking) const override {
 		if (!isEmpty())
 			return false;
-		return std::find(markings.cbegin(), markings.cend(), marking) != markings.cend();
+		return std::find(markings->cbegin(), markings->cend(), marking) != markings->cend();
 	}
 
 	_Ty countMarks() const {
-		return std::count_if(markings.cbegin(), markings.cend(), [&EMPTY_VALUE](const _Ty & marking) {
-			return marking != EMPTY_VALUE;
+		return std::count_if(markings->cbegin(), markings->cend(), [](const _Ty & marking) {
+			return marking != 0;
 		});
 	}
 
-	bool mark(_Ty & marking) {
+	bool mark(const _Ty & marking) override {
 		// Ensuring that the cell doesn't contain the marking first (so we don't have duplicates)
 		if (containsMark(marking))
 			return false;
 		// Finding the first empty spot in the array to put our marking in
 		for (_Ty i = 0; i < _N; ++i) {
-			if (markings[i] == Cell<_Ty, _N>::EMPTY_VALUE) {
-				markings[i] = marking;
+			if ((*markings)[i] == 0) {
+				(*markings)[i] = marking;
 				return true;
 			}
 		}
 		return false;
 	}
 
-	bool unmark(_Ty & marking) {
+	bool unmark(const _Ty & marking) override {
 		for (_Ty i = 0; i < _N; ++i) {
-			if (markings[i] == marking) {
-				markings[i] = Cell<_Ty, _N>::EMPTY_VALUE;
+			if ((*markings)[i] == marking) {
+				(*markings)[i] = 0;
 				return true;
 			}
 		}
 		return false;
 	}
 
-	bool resetMarks() {
+	bool resetMarks() override {
 		for (_Ty i = 0; i < _N; ++i) {
-			markings[i] = i + 1;
+			(*markings)[i] = i + 1;
 		}
 		return true;
+	}
+
+	std::string toString() const {
+		return std::to_string(*value);
 	}
 
 };
