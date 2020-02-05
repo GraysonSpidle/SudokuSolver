@@ -8,45 +8,46 @@
 #define EMPTY_VALUE 0
 
 SUDOKU_TEMPLATE
-std::map<_Ty, std::vector<AbstractCell<_Ty, _N>>> mapCellsToMarks(AbstractUnit<_Ty, _N> & unit) {
-	auto output = std::map<_Ty, std::vector<AbstractCell<_Ty, _N>>>();
+std::map<_Ty, std::vector<AbstractCell<_Ty, _N>*>> mapCellsToMarks(AbstractUnit<_Ty, _N> & unit) {
+	auto output = std::map<_Ty, std::vector<AbstractCell<_Ty, _N>*>>();
 	for (_Ty m = 1; m <= _N; m++) {
-		output[m] = std::vector<AbstractCell<_Ty, _N>>();
 		for (_Ty i = 0; i < _N; ++i) {
 			if (unit.cell(i).containsMark(m))
-				output[m].push_back(unit.cell(i));
+				output[m].push_back(&unit.cell(i));
 		}
 	}
 	return output;
 };
 
 SUDOKU_TEMPLATE
-std::map<_Ty, std::vector<AbstractCell<_Ty, _N>>> mapCellsToMarks(AbstractBoard<_Ty, _N> & board) {
-	auto output = std::map<_Ty, std::vector<AbstractCell<_Ty, _N>>>();
+std::map<_Ty, std::vector<AbstractCell<_Ty, _N>*>> mapCellsToMarks(AbstractBoard<_Ty, _N> & board) {
+	auto output = std::map<_Ty, std::vector<AbstractCell<_Ty, _N>*>>();
 	for (_Ty m = 1; m <= _N; m++) {
-		output[m] = std::vector<AbstractCell<_Ty, _N>>();
 		for (_Ty i = 0; i < _N * _N; ++i) {
 			if (board.cell(i).containsMark(m))
-				output[m].push_back(board.cell(i));
+				output[m].push_back(&board.cell(i));
 		}
 	}
 	return output;
 };
 
 SUDOKU_TEMPLATE
-std::vector<_Ty> markingIntersection(std::vector<AbstractCell<_Ty, _N>> & arg0) {
+std::vector<_Ty> markingIntersection(std::vector<AbstractCell<_Ty, _N>*> & arg0) {
 	auto output = std::vector<_Ty>();
-	auto start = std::find_if(arg0.begin(), arg0.end(), [](AbstractCell<_Ty, _N> & cell) {
-		return cell.isEmpty();
+	auto start = std::find_if(arg0.begin(), arg0.end(), [](AbstractCell<_Ty, _N> * cell) { // Finding the first empty cell
+		return cell->isEmpty();
 	});
 	if (start == arg0.end())
-		return output;
+		return output; // marking intersections don't matter if all the cells are not empty
 
-	for (_Ty i = 0, mark = (*start)[0]; mark != EMPTY_VALUE; ++i, mark = (*start)[i]) {
+	AbstractCell<_Ty, _N> * cell_ptr = *start;
+
+	// iterating through each non-empty mark (using the operator[]) in the very first cell in arg0 and checking if that marking is present in all other cells
+	for (_Ty i = 0, mark = cell_ptr->operator[](0); mark != EMPTY_VALUE; ++i, mark = cell_ptr->operator[](i)) {
 		for (auto it = start; it != arg0.end(); ++it) {
-			if (!it->isEmpty())
+			if (!(*it)->isEmpty())
 				continue;
-			if (it->containsMark(mark))
+			if ((*it)->containsMark(mark))
 				output.push_back(mark);
 		}
 	}
@@ -96,11 +97,11 @@ namespace SudokuAlgorithms {
 		*/
 		bool mutated = false;
 		for (_Ty i = 0; i < _N; ++i) {
-			AbstractCell<_Ty, _N> cell = unit.cell(i);
+			AbstractCell<_Ty, _N> & cell = unit.cell(i);
 			if (!cell.isEmpty())
 				continue;
 
-			if (cell[1] == EMPTY_VALUE)
+			if (cell[1] == EMPTY_VALUE) // This means that there is only 1 marking present
 				mutated |= cell.setValue(cell[0]);
 		}
 		return mutated;
@@ -175,7 +176,7 @@ namespace SudokuAlgorithms {
 		for (auto it = markingMap.begin(); it != markingMap.end(); ++it) {
 			if (it->second.size() == 1) {
 				// We've found a hidden single! (we take those wins)
-				if (it->second[0].setValue(it->first))
+				if (it->second[0]->setValue(it->first))
 					return true;
 			}
 			if (it->second.size() < 2)
@@ -187,10 +188,11 @@ namespace SudokuAlgorithms {
 			else if (sharedMarkings.size() != markingMap[it->first].size())
 				continue;
 
-			for (AbstractCell<_Ty, _N> & cell : it->second) {
-				mutated |= cell.resetMarks();
-				for (_Ty marking : sharedMarkings) {
-					mutated |= cell.mark(marking);
+			for (AbstractCell<_Ty, _N> * cell : it->second) {
+				for (_Ty i = 0, mark = cell->operator[](i); i < _N && mark != EMPTY_VALUE; ++i, mark = cell->operator[](i)) {
+					if (std::find(sharedMarkings.begin(), sharedMarkings.end(), mark) == sharedMarkings.end()) {
+						mutated |= cell->unmark(mark);
+					}
 				}
 			}
 			return mutated;
