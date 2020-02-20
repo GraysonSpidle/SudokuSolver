@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <algorithm>
+#include <set>
 #include "Utils.h"
 
 SUDOKU_TEMPLATE

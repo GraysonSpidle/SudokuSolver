@@ -21,7 +21,10 @@ SUDOKU_TEMPLATE
 std::vector<_Ty> getMarkings(AbstractCell<_Ty, _N> & cell);
 
 SUDOKU_TEMPLATE
-bool testRemoveMarkings(AbstractBoard<_Ty, _N> & board);
+void printMarkings(AbstractBoard<_Ty, _N> & board);
+
+SUDOKU_TEMPLATE
+void printBoard(AbstractBoard<_Ty, _N> & board);
 
 int main() {
 	using _Ty = unsigned char;
@@ -42,8 +45,17 @@ int main() {
 	};
 
 	Board<_Ty, _N> board = { raw };
+	
+	std::cout << SudokuAlgorithms::removeMarkings(board) << std::endl;
+	while (SudokuAlgorithms::intersectionRemoval(board)) {
+		std::cout << "Hidden Sequence Algorithm used" << std::endl;
+	}
+	
+	printMarkings(board);
+	printBoard(board);
+	
 
-	testBoardLayout(board, raw);
+
 	
 
 
@@ -94,8 +106,7 @@ std::vector<_Ty> getMarkings(AbstractCell<_Ty, _N> & cell) {
 }
 
 SUDOKU_TEMPLATE
-bool testRemoveMarkings(AbstractBoard<_Ty, _N> & board) {
-	std::cout << SudokuAlgorithms::removeMarkings(board) << std::endl;
+void printMarkings(AbstractBoard<_Ty, _N> & board) {
 	for (_Ty r = 0; r < _N; ++r) {
 		for (_Ty c = 0; c < _N; ++c) {
 			std::vector<_Ty> markings = getMarkings(board.row(r)[c]);
@@ -105,5 +116,20 @@ bool testRemoveMarkings(AbstractBoard<_Ty, _N> & board) {
 			}
 			std::cout << std::endl;
 		}
+	}
+
+}
+
+SUDOKU_TEMPLATE
+void printBoard(AbstractBoard<_Ty, _N> & board) {
+	for (_Ty r = 0; r < _N; r++) {
+		for (_Ty c = 0, b2 = SudokuUtils::calculateBoxIndex(r, c, _N), previousB2 = b2; c < _N; c++, b2 = SudokuUtils::calculateBoxIndex(r,c,_N)) {
+			if (b2 != previousB2) {
+				std::cout << "  ";
+				previousB2 = b2;
+			}
+			std::cout << std::to_string(board.cell(r,c).getValue()) << " ";
+		}
+		std::cout << std::endl << std::endl;
 	}
 }

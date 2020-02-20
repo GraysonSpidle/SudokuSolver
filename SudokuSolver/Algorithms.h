@@ -93,7 +93,7 @@ namespace SudokuAlgorithms {
 		If found, that cell's value becomes that mark.
 
 		This algorithm is just a slightly worse version of the hiddenSingle algorithm. While the hidden single algorithm does do the same thing as this (and more),
-		this algorithm does it's job slightly faster than the hiddenSingle algorithm, so there is a trade-off there.
+		this algorithm does its job slightly faster than the hiddenSingle algorithm, so there is a trade-off there.
 		*/
 		bool mutated = false;
 		for (_Ty i = 0; i < _N; ++i) {
@@ -101,7 +101,7 @@ namespace SudokuAlgorithms {
 			if (!cell.isEmpty())
 				continue;
 
-			if (cell[1] == EMPTY_VALUE) // This means that there is only 1 marking present
+			if (cell[1] == EMPTY_VALUE) // This means there is only 1 marking present
 				mutated |= cell.setValue(cell[0]);
 		}
 		return mutated;
@@ -161,6 +161,11 @@ namespace SudokuAlgorithms {
 	SUDOKU_TEMPLATE
 	bool hiddenSequence(AbstractUnit<_Ty, _N> & unit) {
 		/* https://www.sudokuwiki.org/Hidden_Candidates
+		- We could take union of n cells (A) and a union of the rest of the cells (B) then do (A - B) to get the markings that could make up the hidden sequence.
+		- Map each cell via association?
+
+
+
 		Conditions to satisfy:
 		1. The hidden sequence's size must be > 0 and < the size of the unit.
 		2. All cells in the hidden sequence must either be in the same row, column, or box.
@@ -171,14 +176,19 @@ namespace SudokuAlgorithms {
 
 		This algorithm finds the first hidden sequence and then stops (including hidden singles).
 		*/
+		using MarkingMap = std::map<_Ty, std::vector<AbstractCell<_Ty, _N>*>>;
+
+		// TODO Find a way to make this work lol
+
 		bool mutated = false;
-		auto markingMap = mapCellsToMarks(unit);
+		MarkingMap markingMap = mapCellsToMarks(unit);
 		for (auto it = markingMap.begin(); it != markingMap.end(); ++it) {
 			if (it->second.size() == 1) {
 				// We've found a hidden single! (we take those wins)
 				if (it->second[0]->setValue(it->first))
 					return true;
 			}
+
 			if (it->second.size() < 2)
 				continue;
 
@@ -227,23 +237,25 @@ namespace SudokuAlgorithms {
 		- the action varies depending on which sub-conditions are satisfied
 		*/
 
+		using MarkingMap = std::map<_Ty, std::vector<AbstractCell<_Ty, _N>*>>;
+
 		bool mutated = false;
-		auto markingMap = mapCellsToMarks(board); // satisfies condition 2
+		MarkingMap markingMap = mapCellsToMarks(board); // satisfies condition 2
 
 		for (auto it = markingMap.begin(); it != markingMap.end(); ++it) {
 			if (it->second.size() <= 0)
 				throw "Something went wrong with mapCellsToMarks()";
 			if (it->second.size() == 1) { // We found a naked/hidden single!
-				mutated |= it->second[0].setValue(it->first);
+				mutated |= it->second[0]->setValue(it->first);
 				return true;
 			}
 
 			// Now we have to filter the collection of cells to cells that are in the same box, but we need to do this for each box
 			for (_Ty bx = 0; bx < _N; ++bx) {
 				// Getting cells that are all in the same box
-				std::vector<AbstractCell<_Ty, _N>> cellsInBox = {};
-				std::for_each(it->second.begin(), it->second.end(), [&bx, &cellsInBox](AbstractCell<_Ty, _N> & cell) {
-					if (cell.getBoxIndex() == bx)
+				std::vector<AbstractCell<_Ty, _N>*> cellsInBox = {};
+				std::for_each(it->second.begin(), it->second.end(), [&bx, &cellsInBox](AbstractCell<_Ty, _N> * cell) {
+					if (cell->getBoxIndex() == bx)
 						cellsInBox.push_back(cell);
 				});
 
@@ -257,7 +269,7 @@ namespace SudokuAlgorithms {
 					auto pred2 = [&it, &bx](AbstractCell<_Ty, _N> & cell) {
 						return cell.isEmpty() && cell.getBoxIndex() == bx && cell.containsMark(it->first);
 					};
-					auto func = [&cellsInBox, &mutated](AbstractCell<_Ty, _N> & cell) {
+					auto func = [&cellsInBox, &mutated, &it](AbstractCell<_Ty, _N> & cell) {
 						if (!cell.isEmpty() || std::find(cellsInBox.begin(), cellsInBox.end(), cell) != cellsInBox.end())
 							return;
 						mutated |= cell.unmark(it->first);
@@ -265,14 +277,14 @@ namespace SudokuAlgorithms {
 
 					// Iterating thru the rows first
 					for (_Ty r = bx / AbstractCell<_Ty, _N>::ROOT_N; r < r + AbstractCell<_Ty, _N>::ROOT_N; ++r) {
-						if (std::any_of(board.row(r).begin(), board.row(r).end(), pred))
+						if (board.row(r).anyOf(pred))
 							continue;
 						// We need to make sure there is at least 1 cell in this row with the marking
 						auto n = std::count_if(cellsInBox.begin(), cellsInBox.end(), pred2);
 						if (n == 1) {
 							for (_Ty x = 0; x < cellsInBox.size(); ++x) {
-								if (cellsInBox[x].getRowIndex() == r) {
-									cellsInBox[x].setValue(it->first);
+								if (cellsInBox[x]->getRowIndex() == r) {
+									cellsInBox[x]->setValue(it->first);
 									return true;
 								}
 							}
@@ -289,8 +301,8 @@ namespace SudokuAlgorithms {
 						auto n = std::count_if(cellsInBox.begin(), cellsInBox.end(), pred2);
 						if (n == 1) {
 							for (_Ty x = 0; x < cellsInBox.size(); ++x) {
-								if (cellsInBox[x].getColIndex() == x) {
-									cellsInBox[x].setValue(it->first);
+								if (cellsInBox[x]->getColIndex() == x) {
+									cellsInBox[x]->setValue(it->first);
 									return true;
 								}
 							}
@@ -301,22 +313,22 @@ namespace SudokuAlgorithms {
 				} else if (cellsInBox.size() >= 2) { // This means they could all be aligned on a row or column inside the box
 					// Checking if the cells are aligned on any rows or cols
 
-					bool alignedOnRow = std::all_of(cellsInBox.cbegin(), cellsInBox.cend(), [&cellsInBox](const AbstractCell<_Ty, _N> & cell) {
-						return cell.getRowIndex() == cellsInBox[0].getRowIndex();
+					bool alignedOnRow = std::all_of(cellsInBox.cbegin(), cellsInBox.cend(), [&cellsInBox](const AbstractCell<_Ty, _N> * cell) {
+						return cell->getRowIndex() == cellsInBox[0]->getRowIndex();
 					});
-					bool alignedOnCol = std::all_of(cellsInBox.cbegin(), cellsInBox.cend(), [&cellsInBox](const AbstractCell<_Ty, _N> & cell) {
-						return cell.getColIndex() == cellsInBox[0].getColIndex();
+					bool alignedOnCol = std::all_of(cellsInBox.cbegin(), cellsInBox.cend(), [&cellsInBox](const AbstractCell<_Ty, _N> * cell) {
+						return cell->getColIndex() == cellsInBox[0]->getColIndex();
 					});
 
 					if (alignedOnRow || alignedOnCol) { // Condition 3a or 3b are satisfied
 
-						_Ty z = alignedOnRow ? cellsInBox[0].getRowIndex() : cellsInBox[0].getColIndex();
+						_Ty z = alignedOnRow ? cellsInBox[0]->getRowIndex() : cellsInBox[0]->getColIndex();
 						AbstractUnit<_Ty, _N> u = alignedOnRow ? board.row(z) : board.col(z);
 
-						std::for_each(u.begin(), u.end(), [&cellsInBox, &mutated](AbstractCell<_Ty, _N> & cell) {
-							if (!cell.isEmpty() || std::find(cellsInBox.begin(), cellsInBox.end(), cell) != cellsInBox.end())
+						std::for_each(u.begin(), u.end(), [&cellsInBox, &mutated](AbstractCell<_Ty, _N> * cell) {
+							if (!cell->isEmpty() || std::find(cellsInBox.begin(), cellsInBox.end(), cell) != cellsInBox.end())
 								return;
-							mutated |= cell.unmark(it->first);
+							mutated |= cell->unmark(it->first);
 						});
 					}
 				}
@@ -342,6 +354,8 @@ namespace SudokuAlgorithms {
 
 		Applies this algorithm to the first xwing it finds.
 		*/
+
+		// TODO fix this
 
 		auto markingMap = mapCellsToMarks(board); // Satisfies condition 3 b/c we'll be iterating thru the pairs
 		for (auto it = markingMap.begin(); it != markingMap.end(); ++it) {
