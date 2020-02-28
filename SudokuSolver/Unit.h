@@ -13,10 +13,10 @@ class Unit : public AbstractUnit<_Ty, _N> {
 public:
 	static constexpr const _Ty ROOT_N = SudokuUtils::isqrt(_N);
 
-	using ptr = std::shared_ptr< Cell<_Ty, _N> >;
+	using CellPtr = std::shared_ptr<AbstractCell<_Ty, _N>>;
 	using BoxUnit = std::array< ptr, ROOT_N >; // A row or column inside a box
 
-	std::array< ptr, _N >				cells;
+	std::array< CellPtr, _N >		    cells;
 	std::array< BoxUnit, ROOT_N >     boxRows;
 	std::array< BoxUnit, ROOT_N >     boxCols;
 
